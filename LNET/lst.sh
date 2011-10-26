@@ -59,6 +59,9 @@ prep_test() {
 	# create session and groups
 	local T_SRV=$1
 	local T_CLI=$2
+	
+	echo $T_CLI
+	echo $T_SRV
 
 	$LST new_session foobar
 	$LST add_group cli $T_CLI
