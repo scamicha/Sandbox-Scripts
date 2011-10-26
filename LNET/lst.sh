@@ -23,7 +23,8 @@ VM_DELAY=3
 
 # clients list, we need 4 or 8 clients at here, please replace them
 # i.e: CLIENTS="client1 client2 client3 client4 client5 client6 client7 client8"
-CLIENTS="client1@tcp client2@tcp client3@tcp client4@tcp"
+# sal compute
+CLIENTS="149.165.224.193@tcp 149.165.224.194@tcp 149.165.224.195@tcp 149.165.224.196@tcp 149.165.224.197@tcp 149.165.224.198@tcp 149.165.224.199@tcp 149.165.224.200@tcp 149.165.224.201@tcp 149.165.224.202@tcp 149.165.224.203@tcp 149.165.224.204@tcp 149.165.224.205@tcp 149.165.224.206@tcp 149.165.224.207@tcp 149.165.224.208@tcp 149.165.224.209@tcp 149.165.224.210@tcp 149.165.224.211@tcp 149.165.224.212@tcp 149.165.224.213@tcp 149.165.224.214@tcp 149.165.224.215@tcp 149.165.224.216@tcp 149.165.224.217@tcp 149.165.224.218@tcp 149.165.224.219@tcp 149.165.224.220@tcp 149.165.224.221@tcp 149.165.224.222@tcp"
 
 # one server
 #
@@ -31,7 +32,8 @@ CLIENTS="client1@tcp client2@tcp client3@tcp client4@tcp"
 #    please run this script on server because it's assuming
 #    that server is test LST console
 #
-SERVERS="server@tcp"
+# sal storage
+SERVERS="149.165.224.235@tcp 149.165.224.236@tcp 149.165.224.237@tcp 149.165.224.238@tcp 149.165.224.239@tcp 149.165.224.240@tcp 149.165.224.241@tcp 149.165.224.242@tcp 149.165.224.243@tcp 149.165.224.244@tcp 149.165.224.245@tcp 149.165.224.246@tcp 149.165.224.247@tcp 149.165.224.248@tcp 149.165.224.249@tcp 149.165.224.250@tcp"
 
 rm -rf $LOGDIR
 mkdir -p $LOGDIR
