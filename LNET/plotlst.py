@@ -15,28 +15,48 @@ def main(*args):
 
     filelist = os.listdir(datadir)
 
-    for f in filelist:
-        entry = []
-        params= f.split("-")
+    for fname in filelist:
+        params= fname.split("-")
         print params
-        entry.append(int(params[1].rstrip('cli')))
-        entry.append(int(params[2].rstrip('srv')))
-        entry.append(int(params[3].rstrip('concur')))
+        clinum = int(params[1].rstrip('cli'))
+        srvnum = int(params[2].rstrip('srv'))
+        concur = int(params[3].rstrip('concur'))
         dist = params[4].lstrip('dist:')
         if dist[0] == '1':
-            entry.append(1)
+            distype = '1to1'
         else:
-            entry.append(0)
+            distype = '1ton'
         if dist[-1] == 'i':
-            entry.append(1)
+            clisrv = 'cli'
         else:
-            entry.append(0)
-        if params[0].find('read') != -1:
-            entry.append(1)
-        else:
-            entry.append(0)
+            clisrv = 'srv'
 
-    print entry
+        entry= dict(clients=clinum, servers=srvnum, rpcs=concur, distrib=distype,
+                    measure=clisrv)
+        f = open(fname,'r')
+        aggregate = array([])
+        if entry['measure'] == 'cli':
+            numlines = entry['clients']
+        else:
+            numlines = entry['servers']
+        allines = f.readlines()
+        for line in xrange(1,numlines):
+            if line == 1:
+                if entry['measure'] == 'srv':
+                    testline = allines[4]
+                else:
+                    testline = allines[5]
+            else:
+                if entry['measure'] == 'srv':
+                    testline = allines[6*line-2]
+                else:
+                    testline = allines[6*line-1]
+            aggregate.append(testline.split()[2])
+        entry['sum'] = aggregate.sum()
+        entry['stdev'] = aggregate.std()
+        
+        del entry
+
     
 
 if __name__ == "__main__":
