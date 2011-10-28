@@ -267,7 +267,7 @@ for RW in $BRW; do
 	if [ $c = 2 ] || [ $c = 4]; then
 	    continue;
 	fi
-	TEST_NAME="$RW-30cli-16srv-${c}concur-dist1:1"
+	TEST_NAME="$RW-30cli-16srv-${c}concur-dist1:n"
 		
 	echo "running $TEST_NAME ......"
 	
