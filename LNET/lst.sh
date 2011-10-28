@@ -142,7 +142,7 @@ for (( i=1; i <= $NCLIENTS; i=$(($i * 2)))) ; do
 
         echo $TEST_SRV
 
-	BRW="read write"
+	BRW="write"
 
 	# brw read & write
 	for RW in $BRW; do
@@ -170,7 +170,7 @@ done
 
 # special case of 30 clients
 
-BRW="read write"
+BRW="write"
 
 	# brw read & write
 for RW in $BRW; do
@@ -230,7 +230,7 @@ for (( i=1; i <= $NCLIENTS; i=$(($i * 2)))) ; do
 
         echo $TEST_SRV
 
-	BRW="read write"
+	BRW="write"
 
 	# brw read & write
 	for RW in $BRW; do
@@ -258,7 +258,7 @@ done
 
 # special case of 30 clients
 
-BRW="read write"
+BRW="write"
 
 	# brw read & write
 for RW in $BRW; do
