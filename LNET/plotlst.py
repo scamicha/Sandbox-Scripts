@@ -10,6 +10,7 @@ import sys
 import os
 import argparse
 import csv
+from operator import itemgetter
 
 def main(*args):
 
@@ -29,10 +30,15 @@ def main(*args):
     bad_srv_file=False
     filelist = os.listdir(datadir)
 
+    alldata = []
+    possible_clients = []
+    possible_servers = []
+    possible_rpcs    = []
+    colors           = ['k','r','g','b']
+
     for fname in filelist:
         params= fname.split("-")
-        print params
-        clinum = int(params[1].rstrip('cli'))
+        clinum = int(params[1].rstrip('cli'))       
         srvnum = int(params[2].rstrip('srv'))
         concur = int(params[3].rstrip('concur'))
         dist = params[4].lstrip('dist1')
@@ -79,20 +85,109 @@ def main(*args):
             del entry
             bad_srv_file=False
             continue
+        if clinum not in possible_clients:
+            possible_clients.append(clinum)
+        if srvnum not in possible_servers:
+            possible_servers.append(srvnum)
+        if concur not in possible_rpcs:
+            possible_rpcs.append(concur)
         aggregate = array(tmp_list)
-        print aggregate
-        print sum(aggregate)
-        entry['sum'] = sum(aggregate)/1024.0
-        entry['avg'] = average(aggregate)/1024.0
-        entry['stdev'] = std(aggregate)/1024.0
+        entry['sum'] = sum(aggregate)
+        entry['avg'] = average(aggregate)
+        entry['stdev'] = std(aggregate)
         row = [entry['clients'],entry['servers'],entry['rpcs'],entry['distrib'],
                entry['measure'],entry['sum'],entry['avg'],entry['stdev']]
         csvwrite.writerow(row)
+        alldata.append(entry)
         
         del entry
         del aggregate
+        
+    clireq = 'secondary'
+    rpcreq = 'primary'
+    srvreq = 8
+    distreq = '1ton'
 
+    if clireq == 'primary':
+        client_request = possible_clients
+        primary = 'clients'
+    elif clireq == 'secondary':
+        client_request = possible_clients
+        secondary = 'clients'
+    else:
+        client_request = [clireq]
+
+    if srvreq == 'primary':
+        server_request = possible_servers
+        primary = 'servers'
+    elif srvreq == 'secondary':
+        server_request = possible_servers
+        secondary = 'servers'
+    else:
+        server_request = [srvreq]
     
+    if rpcreq == 'primary':
+        concur_request = possible_rpcs
+        primary = 'rpcs'
+    elif rpcreq == 'secondary':
+        concur_request = possible_rpcs
+        secondary = 'rpcs'
+    else:
+        concur_request = [rpcreq]
+
+    if distreq == 'secondary':
+        distrib_request = ['1to1','1ton']
+        secondary = 'distrib'
+    else:
+        distrib_request = [distreq]
+
+    requested_data = []
+
+    for d in alldata:
+       for c in client_request:
+           for s in server_request:
+               for r in concur_request:
+                   for dr in distrib_request:
+                       if (d['clients'] == c and d['servers'] == s and d['rpcs'] == r
+                           and d['distrib'] == dr and d['measure'] == 'srv'):
+                           requested_data.append(d)
+
+    #print possible_clients
+    #print possible_rpcs
+    #print requested_data        
+
+    primary_lookup = dict([('clients',client_request),('servers',server_request),
+                      ('rpcs',concur_request),('distrib',distrib_request)])
+    
+    #print primary_lookup[primary]
+    #print primary_lookup[secondary]
+    primary_returned = primary_lookup[primary]
+    for i in primary_returned:
+        found = False
+        for j in requested_data:
+            if j[primary] == i:
+                found = True
+                break
+        if not found:
+            primary_returned.remove(i)
+        else:
+            found = False
+            
+    requested_data_sorted = sorted(requested_data, key=itemgetter(primary))
+    for k,i in enumerate(primary_lookup[secondary]):
+        y_values = []
+        x_values = []
+        for j in requested_data_sorted:
+            if j[secondary] == i:
+                y_values.append(j['sum'])
+                x_values.append(j[primary])
+
+        ci = k%4
+        print x_values
+        print y_values
+        plt.plot(x_values,y_values,color=colors[ci],marker='o')
+
+    plt.show()       
 
 if __name__ == "__main__":
     main()
