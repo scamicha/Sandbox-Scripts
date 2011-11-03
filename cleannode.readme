@@ -1,0 +1,13 @@
+Gents,
+
+The node-cleaning script is at /soft/admin/cleannode.sh.  You need to run it as root, probably via psh:
+
+$ psh <nodelist> /soft/admin/cleannode.sh
+
+<nodelist> is something like "sc1-sc10", or "^/path/to/file" where "file" contains one node per line.  Let me know if you need help with nodelists.
+
+As for the script, it's quite stupid, but we can make it smarter if you like.  It uses /usr/bin/killall to SIGTERM processes owned by users who aren't in /soft/admin/cleannode.exclude.  Then it waits 2 seconds, and SIGKILLs anything that's still running.  If you run it and there's no output, that means no processes were sent signals.  If you run it twice in succession and see output on both runs, that means some process(es) couldn't be killed, and we'll probably need to intervene manually on the node.
+
+The only thing I can think to add to it would be a /tmp cleanup stage.  Let me know if you want that or anything else.
+
+Matt
