@@ -4,7 +4,7 @@
 # log directory
 LOGDIR=/tmp/lst_logs
 
-LST=echo
+LST=lst
 
 # lst stat time interval
 LST_DELAY=60
@@ -36,10 +36,10 @@ CLIENTS="149.165.224.193@tcp 149.165.224.194@tcp 149.165.224.195@tcp 149.165.224
 #    that server is test LST console
 #
 # sal storage
-SERVERS="149.165.224.235@tcp 149.165.224.236@tcp 149.165.224.237@tcp 149.165.224.238@tcp 149.165.224.239@tcp 149.165.224.240@tcp 149.165.224.241@tcp 149.165.224.242@tcp 149.165.224.243@tcp 149.165.224.244@tcp 149.165.224.245@tcp 149.165.224.246@tcp 149.165.224.247@tcp 149.165.224.248@tcp 149.165.224.249@tcp 149.165.224.250@tcp"
+#SERVERS="149.165.224.235@tcp 149.165.224.236@tcp 149.165.224.237@tcp 149.165.224.238@tcp 149.165.224.239@tcp 149.165.224.240@tcp 149.165.224.241@tcp 149.165.224.242@tcp 149.165.224.243@tcp 149.165.224.244@tcp 149.165.224.245@tcp 149.165.224.246@tcp 149.165.224.247@tcp 149.165.224.248@tcp 149.165.224.249@tcp 149.165.224.250@tcp"
 
 # ida storage
-#SERVERS="149.165.224.107@tcp 149.165.224.108@tcp 149.165.224.109@tcp 149.165.224.110@tcp 149.165.224.111@tcp 149.165.224.112@tcp 149.165.224.113@tcp 149.165.224.114@tcp 149.165.224.115@tcp 149.165.224.116@tcp 149.165.224.117@tcp 149.165.224.118@tcp 149.165.224.119@tcp 149.165.224.120@tcp 149.165.224.121@tcp 149.165.224.122@tcp"
+SERVERS="149.165.224.107@tcp 149.165.224.108@tcp 149.165.224.109@tcp 149.165.224.110@tcp 149.165.224.111@tcp 149.165.224.112@tcp 149.165.224.113@tcp 149.165.224.114@tcp 149.165.224.115@tcp 149.165.224.116@tcp 149.165.224.117@tcp 149.165.224.118@tcp 149.165.224.119@tcp 149.165.224.120@tcp 149.165.224.121@tcp 149.165.224.122@tcp"
 
 rm -rf $LOGDIR
 mkdir -p $LOGDIR
@@ -104,13 +104,15 @@ done_test() {
 # NB: the loop will take a few hours (less than 5)
 
 for (( i=1; i <= $NCLIENTS; i=$(($i * 2)))) ; do
-    if [ $i = 2 ] || [ $i = 4 ]; then
+    if [ $i = 8 ] || [ $i = 16 ]; then
 	continue;
     fi
-    for (( j=1; j <= $i; j=$(($j * 2)))); do
-	if [ $j = 2 ]; then
-	    continue;
-	fi
+#    for (( j=1; j <= $i; j=$(($j * 2)))); do
+#	if [ $j = 2 ]; then
+#	    continue;
+#	fi
+
+        j=1
 
         NCLI=0
         TEST_CLI=
@@ -148,7 +150,7 @@ for (( i=1; i <= $NCLIENTS; i=$(($i * 2)))) ; do
 	for RW in $BRW; do
 			# iterate over 1, 2, 4, 8 threads
 	    for (( c=1; c <= $LST_CONCUR; c=$(($c * 2)))) ; do
-		if [ $c = 2 ] || [ $c = 4]; then
+		if [ $c = 2 ] || [ $c = 4 ]; then
 		    continue;
 		fi
 		TEST_NAME="$RW-${i}cli-${j}srv-${c}concur-dist1:1"
@@ -165,7 +167,7 @@ for (( i=1; i <= $NCLIENTS; i=$(($i * 2)))) ; do
 		cleanup $VMSTAT
 	    done
 	done
-    done
+#    done
 done
 
 # special case of 30 clients
@@ -176,9 +178,9 @@ BRW="write"
 for RW in $BRW; do
 	# iterate over 1, 2, 4, 8 threads
     for (( c=1; c <= $LST_CONCUR; c=$(($c * 2)))) ; do
-	if [ $c = 2 ] || [ $c = 4]; then
-	    continue;
-	fi
+#	if [ $c = 2 ] || [ $c = 4]; then
+#	    continue;
+#	fi
 	TEST_NAME="$RW-30cli-16srv-${c}concur-dist1:1"
 		
 	echo "running $TEST_NAME ......"
@@ -194,90 +196,90 @@ for RW in $BRW; do
     done
 done
 
-for (( i=1; i <= $NCLIENTS; i=$(($i * 2)))) ; do
-    if [ $i = 2 ] || [ $i = 4 ]; then
-	continue;
-    fi
-    for (( j=8; j <= 12; j=$(($j + 2)))); do
+# for (( i=1; i <= $NCLIENTS; i=$(($i * 2)))) ; do
+#     if [ $i = 2 ] || [ $i = 4 ]; then
+# 	continue;
+#     fi
+#     for (( j=8; j <= 12; j=$(($j + 2)))); do
 
-        NCLI=0
-        TEST_CLI=
+#         NCLI=0
+#         TEST_CLI=
 
-	# get $i clients
-        for CLI in $CLIENTS; do
-            TEST_CLI="$TEST_CLI $CLI"
+# 	# get $i clients
+#         for CLI in $CLIENTS; do
+#             TEST_CLI="$TEST_CLI $CLI"
 	    
-            NCLI=$(($NCLI + 1))
-            if [ $NCLI = $i ]; then
-                break;
-            fi
-        done
+#             NCLI=$(($NCLI + 1))
+#             if [ $NCLI = $i ]; then
+#                 break;
+#             fi
+#         done
 
-        echo $TEST_CLI
+#         echo $TEST_CLI
 
-	NSRV=0
-	TEST_SRV=
+# 	NSRV=0
+# 	TEST_SRV=
 
-	# get $j servers
-        for SRV in $SERVERS; do
-                TEST_SRV="$TEST_SRV $SRV"
+# 	# get $j servers
+#         for SRV in $SERVERS; do
+#                 TEST_SRV="$TEST_SRV $SRV"
 
-                NSRV=$(($NSRV + 1))
-                if [ $NSRV = $j ]; then
-                        break;
-                fi
-        done
+#                 NSRV=$(($NSRV + 1))
+#                 if [ $NSRV = $j ]; then
+#                         break;
+#                 fi
+#         done
 
-        echo $TEST_SRV
+#         echo $TEST_SRV
 
-	BRW="write"
+# 	BRW="write"
 
-	# brw read & write
-	for RW in $BRW; do
-			# iterate over 1, 2, 4, 8 threads
-	    for (( c=1; c <= $LST_CONCUR; c=$(($c * 2)))) ; do
-		if [ $c = 2 ] || [ $c = 4]; then
-		    continue;
-		fi
-		TEST_NAME="$RW-${i}cli-${j}srv-${c}concur-dist1:n"
+# 	# brw read & write
+# 	for RW in $BRW; do
+# 			# iterate over 1, 2, 4, 8 threads
+# 	    for (( c=1; c <= $LST_CONCUR; c=$(($c * 2)))) ; do
+# 		if [ $c = 2 ] || [ $c = 4]; then
+# 		    continue;
+# 		fi
+# 		TEST_NAME="$RW-${i}cli-${j}srv-${c}concur-dist1:n"
 		
-		echo "running $TEST_NAME ......"
+# 		echo "running $TEST_NAME ......"
 		
-#		vmstat $VM_DELAY > $LOGDIR/$TEST_NAME.vmstat &
-        	VMSTAT=$!
+# #		vmstat $VM_DELAY > $LOGDIR/$TEST_NAME.vmstat &
+#         	VMSTAT=$!
 
-		prep_test "$TEST_SRV" "$TEST_CLI"
-		$LST add_test --from cli --to srv --loop 9000000 --concurrency=$c --distribute=1:${j} brw $RW size=${LST_BRW}k
-		done_test $TEST_NAME "$TEST_SRV" "$TEST_CLI"
+# 		prep_test "$TEST_SRV" "$TEST_CLI"
+# 		$LST add_test --from cli --to srv --loop 9000000 --concurrency=$c --distribute=1:${j} brw $RW size=${LST_BRW}k
+# 		done_test $TEST_NAME "$TEST_SRV" "$TEST_CLI"
 		
-		cleanup $VMSTAT
-	    done
-	done
-    done
-done
+# 		cleanup $VMSTAT
+# 	    done
+# 	done
+#     done
+# done
 
-# special case of 30 clients
+# # special case of 30 clients
 
-BRW="write"
+# BRW="write"
 
-	# brw read & write
-for RW in $BRW; do
-	# iterate over 1, 2, 4, 8 threads
-    for (( c=1; c <= $LST_CONCUR; c=$(($c * 2)))) ; do
-	if [ $c = 2 ] || [ $c = 4]; then
-	    continue;
-	fi
-	TEST_NAME="$RW-30cli-16srv-${c}concur-dist1:n"
+# 	# brw read & write
+# for RW in $BRW; do
+# 	# iterate over 1, 2, 4, 8 threads
+#     for (( c=1; c <= $LST_CONCUR; c=$(($c * 2)))) ; do
+# 	if [ $c = 2 ] || [ $c = 4]; then
+# 	    continue;
+# 	fi
+# 	TEST_NAME="$RW-30cli-16srv-${c}concur-dist1:n"
 		
-	echo "running $TEST_NAME ......"
+# 	echo "running $TEST_NAME ......"
 	
-#		vmstat $VM_DELAY > $LOGDIR/$TEST_NAME.vmstat &
-        VMSTAT=$!
+# #		vmstat $VM_DELAY > $LOGDIR/$TEST_NAME.vmstat &
+#         VMSTAT=$!
 
-	prep_test "$SERVERS" "$CLIENTS"
-	$LST add_test --from cli --to srv --loop 9000000 --concurrency=$c --distribute=1:16 brw $RW size=${LST_BRW}k
-	done_test $TEST_NAME "$SERVERS" "$CLIENTS"
+# 	prep_test "$SERVERS" "$CLIENTS"
+# 	$LST add_test --from cli --to srv --loop 9000000 --concurrency=$c --distribute=1:16 brw $RW size=${LST_BRW}k
+# 	done_test $TEST_NAME "$SERVERS" "$CLIENTS"
 	
-	cleanup $VMSTAT
-    done
-done
+# 	cleanup $VMSTAT
+#     done
+# done
